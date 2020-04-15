@@ -75,7 +75,12 @@ export class SchemaProcessor {
         let commitMessage = `Update wrt ${context.sha}`;
         // not using this.run as we'll have space in commit message
         await tk.runInWorkspace('git',['commit','-m',commitMessage]);
-        await this.run(tk, `git push -f origin ${languageSpecificBranchName}`);
+        try {
+            await this.run(tk, `git push origin ${languageSpecificBranchName}`);
+        } catch {
+            await this.run(tk, `git push -f origin ${languageSpecificBranchName}`);
+        }
+        
     }
 
     public async process() {

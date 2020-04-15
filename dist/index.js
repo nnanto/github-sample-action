@@ -13489,7 +13489,12 @@ class SchemaProcessor {
             let commitMessage = `Update wrt ${github_1.context.sha}`;
             // not using this.run as we'll have space in commit message
             yield tk.runInWorkspace('git', ['commit', '-m', commitMessage]);
-            yield this.run(tk, `git push -f origin ${languageSpecificBranchName}`);
+            try {
+                yield this.run(tk, `git push origin ${languageSpecificBranchName}`);
+            }
+            catch (_a) {
+                yield this.run(tk, `git push -f origin ${languageSpecificBranchName}`);
+            }
         });
     }
     process() {
