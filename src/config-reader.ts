@@ -21,7 +21,7 @@ export class ConfigReader {
         console.log('Proto exec result:', result.all);
         console.log("Reading with token :", this.token, " from workspace : ", process.env.GITHUB_WORKSPACE);
         
-        var generatedFileContent = tk.getFile('csharp/Addressbook.cs');
+        var generatedFileContent = tk.getFile('csharp/Schema.cs');
         console.log('Generated file content:', generatedFileContent);
     }
 
