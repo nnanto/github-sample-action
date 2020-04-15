@@ -49,7 +49,7 @@ export class SchemaProcessor {
 
     private async run(tk: Toolkit, command: string) {
         let commandsArr = command.split(" ");
-        await tk.runInWorkspace(commandsArr.shift() as string, commandsArr);
+        return await tk.runInWorkspace(commandsArr.shift() as string, commandsArr);
     }
 
     private async createCodeFor(tk: Toolkit, language: string) {
@@ -63,7 +63,8 @@ export class SchemaProcessor {
 
         await this.runAndPrint(tk, `git`,['branch','-v']);
         try {
-            await this.run(tk, `git checkout -b ${languageSpecificBranchName}`);
+            let result = await this.run(tk, `git checkout -b ${languageSpecificBranchName}`);
+            console.log(result.all);
         } catch (err) {
             console.log(`Branch ${languageSpecificBranchName} already exists`);
             await this.run(tk, `git checkout ${languageSpecificBranchName}`);
