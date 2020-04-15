@@ -35125,7 +35125,7 @@ class ConfigReader {
             const result = yield tk.runInWorkspace('protoc', ['schema.proto', '--csharp_out=./csharp']);
             yield this.run(tk, "git branch -v");
             yield this.run(tk, "git remote -v");
-            yield this.run(tk, 'cd csharp');
+            yield this.runAndPrint(tk, "git", ["status"]);
             yield this.run(tk, 'git commit -am "new_code_generated"');
             console.log('Proto exec result:', result.stdout);
             console.log("Reading with token :", this.token, " from workspace : ", process.env.GITHUB_WORKSPACE);

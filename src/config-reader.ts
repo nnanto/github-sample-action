@@ -65,7 +65,7 @@ export class ConfigReader {
         await this.run(tk, "git branch -v");
         await this.run(tk, "git remote -v");
 
-        await this.run(tk, 'cd csharp');
+        await this.runAndPrint(tk, "git", ["status"]);
         await this.run(tk, 'git commit -am "new_code_generated"');
         
         console.log('Proto exec result:', result.stdout);
