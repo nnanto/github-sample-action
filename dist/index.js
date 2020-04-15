@@ -13475,12 +13475,16 @@ class SchemaProcessor {
             yield this.run(tk, `mkdir -p ${language}`);
             yield this.run(tk, `protoc ${schemaFileName} --${language}_out=./${language}`);
             let languageSpecificBranchName = this.getLanguageBasedBranchName(language);
-            let gh = new github_1.GitHub(this.token);
-            yield this.createBranch(gh, languageSpecificBranchName);
+            yield this.runAndPrint(tk, `git`, ['branch', '-v']);
+            try {
+                yield this.run(tk, `git checkout -b ${languageSpecificBranchName}`);
+            }
+            catch (err) {
+                console.log(`Branch ${languageSpecificBranchName} already exists`);
+                yield this.run(tk, `git checkout ${languageSpecificBranchName}`);
+            }
             yield this.run(tk, `git config user.email ${process.env.GITHUB_ACTOR}@gmail.com`);
             yield this.run(tk, `git config user.name ${process.env.GITHUB_ACTOR}`);
-            yield this.runAndPrint(tk, `git`, ['branch', '-v']);
-            yield this.run(tk, `git checkout ${languageSpecificBranchName}`);
             yield this.run(tk, 'git add .');
             let commitMessage = `Update wrt ${github_1.context.sha}`;
             // not using this.run as we'll have space in commit message
