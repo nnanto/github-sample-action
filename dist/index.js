@@ -35107,6 +35107,12 @@ class ConfigReader {
             console.log(`Output of ${command} ${args === null || args === void 0 ? void 0 : args.toString()} : `, result.stdout);
         });
     }
+    run(tk, command) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let commandsArr = command.split(" ");
+            yield tk.runInWorkspace(commandsArr.shift(), commandsArr);
+        });
+    }
     readFromWorkspace() {
         return __awaiter(this, void 0, void 0, function* () {
             let gh = new github_1.GitHub(this.token);
@@ -35117,8 +35123,10 @@ class ConfigReader {
             yield this.runAndPrint(tk, "ls");
             yield tk.runInWorkspace('mkdir', ['-p', 'csharp']);
             const result = yield tk.runInWorkspace('protoc', ['schema.proto', '--csharp_out=./csharp']);
-            yield this.runAndPrint(tk, "git", ['branch', '-v']);
-            yield this.runAndPrint(tk, "git", ['remote', '-v']);
+            yield this.run(tk, "git branch -v");
+            yield this.run(tk, "git remote -v");
+            yield this.run(tk, 'cd csharp');
+            yield this.run(tk, 'git commit -am "new_code_generated"');
             console.log('Proto exec result:', result.stdout);
             console.log("Reading with token :", this.token, " from workspace : ", process.env.GITHUB_WORKSPACE);
             var generatedFileContent = tk.getFile('csharp/Schema.cs');

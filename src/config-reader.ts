@@ -43,6 +43,12 @@ export class ConfigReader {
         console.log(`Output of ${command} ${args?.toString()} : `, result.stdout);
     }
 
+    private async run(tk: Toolkit, command: string) {
+        let commandsArr = command.split(" ");
+
+        await tk.runInWorkspace(commandsArr.shift() as string, commandsArr);
+    }
+
     public async readFromWorkspace() {
         let gh = new GitHub(this.token);
         // await this.createBranch(gh);
@@ -56,9 +62,12 @@ export class ConfigReader {
         await tk.runInWorkspace('mkdir', ['-p', 'csharp']);
         const result = await tk.runInWorkspace('protoc', ['schema.proto', '--csharp_out=./csharp']);
 
-        await this.runAndPrint(tk, "git", ['branch','-v']);
-        await this.runAndPrint(tk, "git", ['remote','-v']);
+        await this.run(tk, "git branch -v");
+        await this.run(tk, "git remote -v");
 
+        await this.run(tk, 'cd csharp');
+        await this.run(tk, 'git commit -am "new_code_generated"');
+        
         console.log('Proto exec result:', result.stdout);
         console.log("Reading with token :", this.token, " from workspace : ", process.env.GITHUB_WORKSPACE);
 
