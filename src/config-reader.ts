@@ -69,8 +69,8 @@ export class ConfigReader {
         await this.run(tk, 'git checkout -b csharp');
         await this.run(tk, `git config user.email ${process.env.GITHUB_ACTOR}@gmail.com`);
         await this.run(tk, `git config user.name ${process.env.GITHUB_ACTOR}`);
-
-        await this.run(tk, 'git commit -a -m "new_code_generated"');
+        await this.run(tk, 'git add .')
+        await this.run(tk, 'git commit -m "new_code_generated"');
         
         console.log('Proto exec result:', result.stdout);
         console.log("Reading with token :", this.token, " from workspace : ", process.env.GITHUB_WORKSPACE);
