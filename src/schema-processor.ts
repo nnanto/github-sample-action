@@ -64,7 +64,7 @@ export class SchemaProcessor {
         await this.createBranch(gh, languageSpecificBranchName);
         await this.run(tk, `git config user.email ${process.env.GITHUB_ACTOR}@gmail.com`);
         await this.run(tk, `git config user.name ${process.env.GITHUB_ACTOR}`);
-        await this.runAndPrint(tk, `git branch -v`);
+        await this.runAndPrint(tk, `git`,['branch','-v']);
         await this.run(tk, `git checkout ${languageSpecificBranchName}`);
         await this.run(tk, 'git add .');
         let commitMessage = `Update wrt ${context.sha}`;
