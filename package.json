@@ -21,6 +21,7 @@
   "dependencies": {
     "@actions/core": "^1.2.3",
     "@actions/github": "^2.1.1",
+    "actions-toolkit": "^4.0.0",
     "g": "^2.0.1",
     "tsc": "^1.20150623.0",
     "typescript": "^3.8.3"
