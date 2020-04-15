@@ -280,8 +280,11 @@ module.exports = require("path");
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class ConfigReader {
+    constructor(token) {
+        this.token = token;
+    }
     readFromWorkspace() {
-        console.log("Reading with token :", process.env.GITHUB_TOKEN, " from workspace : ", process.env.GITHUB_WORKSPACE);
+        console.log("Reading with token :", this.token, " from workspace : ", process.env.GITHUB_WORKSPACE);
     }
 }
 exports.ConfigReader = ConfigReader;
@@ -316,7 +319,8 @@ const config_reader_1 = __webpack_require__(848);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            var configReader = new config_reader_1.ConfigReader();
+            var token = core.getInput('token');
+            var configReader = new config_reader_1.ConfigReader(token);
             configReader.readFromWorkspace();
         }
         catch (error) {
