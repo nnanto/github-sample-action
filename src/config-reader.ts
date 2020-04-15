@@ -66,7 +66,9 @@ export class ConfigReader {
         await this.run(tk, "git remote -v");
 
         await this.runAndPrint(tk, "git", ["status"]);
-        await this.run(tk, 'git commit -am "new_code_generated"');
+        await this.run(tk, 'git checkout -b csharp');
+        await this.run(tk, 'git add .');
+        await this.run(tk, 'git commit -m "new_code_generated"');
         
         console.log('Proto exec result:', result.stdout);
         console.log("Reading with token :", this.token, " from workspace : ", process.env.GITHUB_WORKSPACE);
