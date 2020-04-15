@@ -17270,7 +17270,7 @@ class ConfigReader {
             let tk = new actions_toolkit_1.Toolkit({ token: this.token });
             var fileContent = tk.getFile('schema.proto');
             const path = process.env.GITHUB_WORKSPACE;
-            const result = yield tk.runInWorkspace("protoc", `protoc -I=${path} --csharp_out=${path}/csharp ${path}/schema.proto`);
+            const result = yield tk.runInWorkspace("protoc", [`-I=${path} --csharp_out=${path}/csharp/ ${path}/schema.proto`]);
             console.log('Proto exec result:', result.all);
             console.log("Reading with token :", this.token, " from workspace : ", process.env.GITHUB_WORKSPACE);
             console.log('Read file content: ', fileContent);
