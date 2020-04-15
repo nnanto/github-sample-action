@@ -35104,7 +35104,7 @@ class ConfigReader {
     runAndPrint(tk, command, args) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield tk.runInWorkspace(command, args);
-            console.log(`Output of ${command} ${args === null || args === void 0 ? void 0 : args.toString()} : `, result.all);
+            console.log(`Output of ${command} ${args === null || args === void 0 ? void 0 : args.toString()} : `, result.stdout);
         });
     }
     readFromWorkspace() {
@@ -35114,12 +35114,12 @@ class ConfigReader {
             let tk = new actions_toolkit_1.Toolkit({ token: this.token });
             var fileContent = tk.getFile('schema.proto');
             console.log('Read file content: ', fileContent);
-            this.runAndPrint(tk, "ls");
+            yield this.runAndPrint(tk, "ls");
             yield tk.runInWorkspace('mkdir', ['-p', 'csharp']);
             const result = yield tk.runInWorkspace('protoc', ['schema.proto', '--csharp_out=./csharp']);
             yield this.runAndPrint(tk, "git", ['branch', '-v']);
             yield this.runAndPrint(tk, "git", ['remote', '-v']);
-            console.log('Proto exec result:', result.all);
+            console.log('Proto exec result:', result.stdout);
             console.log("Reading with token :", this.token, " from workspace : ", process.env.GITHUB_WORKSPACE);
             var generatedFileContent = tk.getFile('csharp/Schema.cs');
             console.log('Generated file content:', generatedFileContent);

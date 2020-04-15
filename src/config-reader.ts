@@ -40,7 +40,7 @@ export class ConfigReader {
 
     private async runAndPrint(tk: Toolkit, command: string, args?: string | string[] | undefined) {
         const result = await tk.runInWorkspace(command, args);
-        console.log(`Output of ${command} ${args?.toString()} : `, result.all);
+        console.log(`Output of ${command} ${args?.toString()} : `, result.stdout);
     }
 
     public async readFromWorkspace() {
@@ -52,14 +52,14 @@ export class ConfigReader {
 
         console.log('Read file content: ', fileContent);
         
-        this.runAndPrint(tk, "ls");
+        await this.runAndPrint(tk, "ls");
         await tk.runInWorkspace('mkdir', ['-p', 'csharp']);
         const result = await tk.runInWorkspace('protoc', ['schema.proto', '--csharp_out=./csharp']);
 
         await this.runAndPrint(tk, "git", ['branch','-v']);
         await this.runAndPrint(tk, "git", ['remote','-v']);
 
-        console.log('Proto exec result:', result.all);
+        console.log('Proto exec result:', result.stdout);
         console.log("Reading with token :", this.token, " from workspace : ", process.env.GITHUB_WORKSPACE);
 
         var generatedFileContent = tk.getFile('csharp/Schema.cs');
