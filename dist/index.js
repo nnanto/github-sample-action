@@ -35119,22 +35119,24 @@ class ConfigReader {
             // await this.createBranch(gh);
             let tk = new actions_toolkit_1.Toolkit({ token: this.token });
             var fileContent = tk.getFile('schema.proto');
-            console.log('Read file content: ', fileContent);
+            // console.log('Read file content: ', fileContent);
             yield this.runAndPrint(tk, "ls");
             yield tk.runInWorkspace('mkdir', ['-p', 'csharp']);
             const result = yield tk.runInWorkspace('protoc', ['schema.proto', '--csharp_out=./csharp']);
             yield this.run(tk, "git branch -v");
             yield this.run(tk, "git remote -v");
+            let branchName = 'csharp';
             yield this.runAndPrint(tk, "git", ["status"]);
-            yield this.run(tk, 'git checkout -b csharp');
+            yield this.run(tk, `git checkout -b ${branchName}`);
             yield this.run(tk, `git config user.email ${process.env.GITHUB_ACTOR}@gmail.com`);
             yield this.run(tk, `git config user.name ${process.env.GITHUB_ACTOR}`);
             yield this.run(tk, 'git add .');
             yield this.run(tk, 'git commit -m "new_code_generated"');
+            yield this.run(tk, `git push origin ${branchName}`);
             console.log('Proto exec result:', result.stdout);
             console.log("Reading with token :", this.token, " from workspace : ", process.env.GITHUB_WORKSPACE);
-            var generatedFileContent = tk.getFile('csharp/Schema.cs');
-            console.log('Generated file content:', generatedFileContent);
+            // var generatedFileContent = tk.getFile('csharp/Schema.cs');
+            // console.log('Generated file content:', generatedFileContent);
         });
     }
 }

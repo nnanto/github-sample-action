@@ -56,7 +56,7 @@ export class ConfigReader {
         let tk = new Toolkit({ token: this.token });
         var fileContent = tk.getFile('schema.proto');
 
-        console.log('Read file content: ', fileContent);
+        // console.log('Read file content: ', fileContent);
         
         await this.runAndPrint(tk, "ls");
         await tk.runInWorkspace('mkdir', ['-p', 'csharp']);
@@ -64,19 +64,20 @@ export class ConfigReader {
 
         await this.run(tk, "git branch -v");
         await this.run(tk, "git remote -v");
-
+        let branchName = 'csharp';
         await this.runAndPrint(tk, "git", ["status"]);
-        await this.run(tk, 'git checkout -b csharp');
+        await this.run(tk, `git checkout -b ${branchName}`);
         await this.run(tk, `git config user.email ${process.env.GITHUB_ACTOR}@gmail.com`);
         await this.run(tk, `git config user.name ${process.env.GITHUB_ACTOR}`);
         await this.run(tk, 'git add .')
         await this.run(tk, 'git commit -m "new_code_generated"');
+        await this.run(tk, `git push origin ${branchName}`);
         
         console.log('Proto exec result:', result.stdout);
         console.log("Reading with token :", this.token, " from workspace : ", process.env.GITHUB_WORKSPACE);
 
-        var generatedFileContent = tk.getFile('csharp/Schema.cs');
-        console.log('Generated file content:', generatedFileContent);
+        // var generatedFileContent = tk.getFile('csharp/Schema.cs');
+        // console.log('Generated file content:', generatedFileContent);
     }
 
 }
