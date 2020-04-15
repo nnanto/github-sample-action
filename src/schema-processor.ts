@@ -78,7 +78,7 @@ export class SchemaProcessor {
 
         let tk = new Toolkit({ token: this.token });
 
-        await this.createCodeFor(tk, 'csharp');
+        // await this.createCodeFor(tk, 'csharp');
     }
 
 }
