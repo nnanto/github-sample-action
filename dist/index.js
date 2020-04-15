@@ -9277,13 +9277,7 @@ module.exports = windowsRelease;
 /* 417 */,
 /* 418 */,
 /* 419 */,
-/* 420 */
-/***/ (function(module) {
-
-module.exports = eval("require")("octokit-create-pull-request");
-
-
-/***/ }),
+/* 420 */,
 /* 421 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -35083,7 +35077,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const github_1 = __webpack_require__(462);
 const actions_toolkit_1 = __webpack_require__(219);
-const createPullRequest = __webpack_require__(420);
 class ConfigReader {
     constructor(token) {
         this.token = token;

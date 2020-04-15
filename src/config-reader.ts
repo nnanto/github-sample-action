@@ -1,6 +1,5 @@
 import { GitHub, context } from '@actions/github';
 import { Toolkit } from 'actions-toolkit';
-const createPullRequest = require("octokit-create-pull-request");
 
 export class ConfigReader {
 
