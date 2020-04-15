@@ -16,7 +16,7 @@ export class ConfigReader {
         const path = process.env.GITHUB_WORKSPACE;
         const files = await tk.runInWorkspace("ls");
         console.log(`Result of running 'ls' :`, files);
-        const result = await tk.runInWorkspace("protoc",[`schema.proto --csharp_out=./csharp`]);
+        const result = await tk.runInWorkspace("protoc schema.proto --csharp_out=./csharp");
         console.log('Proto exec result:', result.all);
         console.log("Reading with token :", this.token, " from workspace : ", process.env.GITHUB_WORKSPACE);
         
