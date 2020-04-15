@@ -17273,7 +17273,8 @@ class ConfigReader {
             const path = process.env.GITHUB_WORKSPACE;
             const files = yield tk.runInWorkspace("ls");
             console.log(`Result of running 'ls' :`, files);
-            const result = yield tk.runInWorkspace('protoc', ['--version']);
+            yield tk.runInWorkspace('mkdir', ['-p', 'csharp']);
+            const result = yield tk.runInWorkspace('protoc', ['schema.proto', '--csharp_out=./csharp']);
             console.log('Proto exec result:', result.all);
             console.log("Reading with token :", this.token, " from workspace : ", process.env.GITHUB_WORKSPACE);
             var generatedFileContent = tk.getFile('csharp/Addressbook.cs');
