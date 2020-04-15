@@ -6,7 +6,7 @@ async function run() {
     try {
         var token = core.getInput('token');
         var configReader = new ConfigReader(token);
-        configReader.readFromWorkspace();
+        await configReader.readFromWorkspace();
 
     } catch (error) {
         core.setFailed(error.message);
