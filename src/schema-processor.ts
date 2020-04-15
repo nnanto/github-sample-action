@@ -16,7 +16,7 @@ export class SchemaProcessor {
     }
 
     private getLanguageBasedBranchName(language: string) {
-        return `${this.getCurrentBranchName()}/${language}`; 
+        return `${this.getCurrentBranchName()}_${language}`; 
     }
 
     private async createBranch(github: GitHub, branchName: string) {
@@ -77,8 +77,11 @@ export class SchemaProcessor {
         // await this.createBranch(gh);
 
         let tk = new Toolkit({ token: this.token });
-
-        // await this.createCodeFor(tk, 'csharp');
+        try {
+            await this.createCodeFor(tk, 'csharp');
+        } catch(err) {
+            console.error(err.message);
+        }
     }
 
 }

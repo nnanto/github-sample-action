@@ -13435,7 +13435,7 @@ class SchemaProcessor {
         return github_1.context.ref.split('/').pop();
     }
     getLanguageBasedBranchName(language) {
-        return `${this.getCurrentBranchName()}/${language}`;
+        return `${this.getCurrentBranchName()}_${language}`;
     }
     createBranch(github, branchName) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -13490,7 +13490,12 @@ class SchemaProcessor {
         return __awaiter(this, void 0, void 0, function* () {
             // await this.createBranch(gh);
             let tk = new actions_toolkit_1.Toolkit({ token: this.token });
-            // await this.createCodeFor(tk, 'csharp');
+            try {
+                yield this.createCodeFor(tk, 'csharp');
+            }
+            catch (err) {
+                console.error(err.message);
+            }
         });
     }
 }
