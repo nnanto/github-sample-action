@@ -9321,7 +9321,7 @@ const path = __webpack_require__(622);
 const niceTry = __webpack_require__(741);
 const resolveCommand = __webpack_require__(598);
 const escape = __webpack_require__(272);
-const readShebang = __webpack_require__(558);
+const readShebang = __webpack_require__(564);
 const semver = __webpack_require__(105);
 
 const isWin = process.platform === 'win32';
@@ -13410,6 +13410,120 @@ GlobSync.prototype._makeAbs = function (f) {
 /***/ }),
 /* 557 */,
 /* 558 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const github_1 = __webpack_require__(462);
+const actions_toolkit_1 = __webpack_require__(219);
+var supportedLanguages = ['csharp', 'java'];
+class SchemaProcessor {
+    constructor(token) {
+        this.token = token;
+    }
+    getCurrentBranchName() {
+        return github_1.context.ref.split('/').pop();
+    }
+    getLanguageBasedBranchName(language) {
+        return `${this.getCurrentBranchName()}/${language}`;
+    }
+    createBranch(github, branchName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // throws HttpError if branch already exists.
+            try {
+                yield github.repos.getBranch(Object.assign(Object.assign({}, github_1.context.repo), { branch: branchName }));
+            }
+            catch (error) {
+                if (error.name === 'HttpError' && error.status === 404) {
+                    yield github.git.createRef(Object.assign({ ref: `refs/heads/${branchName}`, sha: github_1.context.sha }, github_1.context.repo));
+                }
+                else {
+                    throw Error(error);
+                }
+            }
+        });
+    }
+    runAndPrint(tk, command, args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield tk.runInWorkspace(command, args);
+            console.log(`Output of ${command} ${args === null || args === void 0 ? void 0 : args.toString()} : `, result.stdout);
+        });
+    }
+    run(tk, command) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let commandsArr = command.split(" ");
+            yield tk.runInWorkspace(commandsArr.shift(), commandsArr);
+        });
+    }
+    createCodeFor(tk, language) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!supportedLanguages.includes(language)) {
+                throw new Error(`Not a supported language! Please choose one of the following language : ${supportedLanguages.toString()}`);
+            }
+            let schemaFileName = 'schema.proto';
+            yield this.run(tk, `mkdir -p ${language}`);
+            yield this.run(tk, `protoc ${schemaFileName} --${language}_out=./${language}`);
+            let languageSpecificBranchName = this.getLanguageBasedBranchName(language);
+            let gh = new github_1.GitHub(this.token);
+            yield this.createBranch(gh, languageSpecificBranchName);
+            yield this.run(tk, `git config user.email ${process.env.GITHUB_ACTOR}@gmail.com`);
+            yield this.run(tk, `git config user.name ${process.env.GITHUB_ACTOR}`);
+            yield this.run(tk, `git checkout ${languageSpecificBranchName}`);
+            yield this.run(tk, 'git add .');
+            let commitMessage = `Update wrt ${github_1.context.sha}`;
+            // not using this.run as we'll have space in commit message
+            yield tk.runInWorkspace('git', ['commit', '-m', commitMessage]);
+            yield this.run(tk, `git push -f origin ${languageSpecificBranchName}`);
+        });
+    }
+    process() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // await this.createBranch(gh);
+            let tk = new actions_toolkit_1.Toolkit({ token: this.token });
+            yield this.createCodeFor(tk, 'csharp');
+        });
+    }
+}
+exports.SchemaProcessor = SchemaProcessor;
+
+
+/***/ }),
+/* 559 */,
+/* 560 */
+/***/ (function(module) {
+
+"use strict";
+
+module.exports = x => {
+	if (typeof x !== 'string') {
+		throw new TypeError('Expected a string, got ' + typeof x);
+	}
+
+	// Catches EFBBBF (UTF-8 BOM) because the buffer-to-string
+	// conversion translates it to FEFF (UTF-16 BOM)
+	if (x.charCodeAt(0) === 0xFEFF) {
+		return x.slice(1);
+	}
+
+	return x;
+};
+
+
+/***/ }),
+/* 561 */,
+/* 562 */,
+/* 563 */,
+/* 564 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
 "use strict";
@@ -13448,32 +13562,6 @@ module.exports = readShebang;
 
 
 /***/ }),
-/* 559 */,
-/* 560 */
-/***/ (function(module) {
-
-"use strict";
-
-module.exports = x => {
-	if (typeof x !== 'string') {
-		throw new TypeError('Expected a string, got ' + typeof x);
-	}
-
-	// Catches EFBBBF (UTF-8 BOM) because the buffer-to-string
-	// conversion translates it to FEFF (UTF-16 BOM)
-	if (x.charCodeAt(0) === 0xFEFF) {
-		return x.slice(1);
-	}
-
-	return x;
-};
-
-
-/***/ }),
-/* 561 */,
-/* 562 */,
-/* 563 */,
-/* 564 */,
 /* 565 */,
 /* 566 */,
 /* 567 */,
@@ -35060,90 +35148,7 @@ module.exports = {
 
 
 /***/ }),
-/* 848 */
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const github_1 = __webpack_require__(462);
-const actions_toolkit_1 = __webpack_require__(219);
-class ConfigReader {
-    constructor(token) {
-        this.token = token;
-    }
-    getBranchName() {
-        return github_1.context.ref.split('/').pop();
-    }
-    createBranch(github, lang = 'csharp') {
-        return __awaiter(this, void 0, void 0, function* () {
-            let branch = this.getBranchName() + '-' + lang;
-            // throws HttpError if branch already exists.
-            try {
-                yield github.repos.getBranch(Object.assign(Object.assign({}, github_1.context.repo), { branch }));
-            }
-            catch (error) {
-                if (error.name === 'HttpError' && error.status === 404) {
-                    yield github.git.createRef(Object.assign({ ref: `refs/heads/${branch}`, sha: github_1.context.sha }, github_1.context.repo));
-                }
-                else {
-                    throw Error(error);
-                }
-            }
-        });
-    }
-    runAndPrint(tk, command, args) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const result = yield tk.runInWorkspace(command, args);
-            console.log(`Output of ${command} ${args === null || args === void 0 ? void 0 : args.toString()} : `, result.stdout);
-        });
-    }
-    run(tk, command) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let commandsArr = command.split(" ");
-            yield tk.runInWorkspace(commandsArr.shift(), commandsArr);
-        });
-    }
-    readFromWorkspace() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let gh = new github_1.GitHub(this.token);
-            // await this.createBranch(gh);
-            let tk = new actions_toolkit_1.Toolkit({ token: this.token });
-            var fileContent = tk.getFile('schema.proto');
-            // console.log('Read file content: ', fileContent);
-            yield this.runAndPrint(tk, "ls");
-            yield tk.runInWorkspace('mkdir', ['-p', 'csharp']);
-            const result = yield tk.runInWorkspace('protoc', ['schema.proto', '--csharp_out=./csharp']);
-            yield this.run(tk, "git branch -v");
-            yield this.run(tk, "git remote -v");
-            let branchName = 'csharp';
-            yield this.runAndPrint(tk, "git", ["status"]);
-            yield this.run(tk, `git checkout -b ${branchName}`);
-            yield this.run(tk, `git config user.email ${process.env.GITHUB_ACTOR}@gmail.com`);
-            yield this.run(tk, `git config user.name ${process.env.GITHUB_ACTOR}`);
-            yield this.run(tk, 'git add .');
-            yield this.run(tk, 'git commit -m "new_code_generated"');
-            yield this.run(tk, `git push origin ${branchName}`);
-            console.log('Proto exec result:', result.stdout);
-            console.log("Reading with token :", this.token, " from workspace : ", process.env.GITHUB_WORKSPACE);
-            // var generatedFileContent = tk.getFile('csharp/Schema.cs');
-            // console.log('Generated file content:', generatedFileContent);
-        });
-    }
-}
-exports.ConfigReader = ConfigReader;
-
-
-/***/ }),
+/* 848 */,
 /* 849 */,
 /* 850 */,
 /* 851 */,
@@ -37566,13 +37571,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(310));
-const config_reader_1 = __webpack_require__(848);
+const schema_processor_1 = __webpack_require__(558);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             var token = core.getInput('token');
-            var configReader = new config_reader_1.ConfigReader(token);
-            yield configReader.readFromWorkspace();
+            var schemaProcessor = new schema_processor_1.SchemaProcessor(token);
+            yield schemaProcessor.process();
         }
         catch (error) {
             core.setFailed(error.message);
